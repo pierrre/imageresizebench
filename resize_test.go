@@ -165,6 +165,12 @@ func BenchmarkRezLanczos3(b *testing.B) {
 }
 
 func benchmarkRez(b *testing.B, filter rez.Filter) {
+	defer func() {
+		err := recover()
+		if err != nil {
+			b.Skipf("skip: %s", err)
+		}
+	}()
 	benchmark(b, newResizeFuncRez(filter))
 }
 

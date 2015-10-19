@@ -59,10 +59,18 @@ func main() {
 	resize(im, newResizeFuncGift(gift.LinearResampling), "gift_linear.png")
 	resize(im, newResizeFuncGift(gift.CubicResampling), "gift_cubic.png")
 	resize(im, newResizeFuncGift(gift.LanczosResampling), "gift_lanczos.png")
-	resize(im, newResizeFuncRez(rez.NewBilinearFilter()), "rez_bilinear.png")
-	resize(im, newResizeFuncRez(rez.NewBicubicFilter()), "rez_bicubic.png")
-	resize(im, newResizeFuncRez(rez.NewLanczosFilter(2)), "rez_lanczos2.png")
-	resize(im, newResizeFuncRez(rez.NewLanczosFilter(3)), "rez_lanczos3.png")
+	func() {
+		defer func() {
+			err := recover()
+			if err != nil {
+				fmt.Printf("error with rez: %s\n", err)
+			}
+		}()
+		resize(im, newResizeFuncRez(rez.NewBilinearFilter()), "rez_bilinear.png")
+		resize(im, newResizeFuncRez(rez.NewBicubicFilter()), "rez_bicubic.png")
+		resize(im, newResizeFuncRez(rez.NewLanczosFilter(2)), "rez_lanczos2.png")
+		resize(im, newResizeFuncRez(rez.NewLanczosFilter(3)), "rez_lanczos3.png")
+	}()
 }
 
 func load() image.Image {
