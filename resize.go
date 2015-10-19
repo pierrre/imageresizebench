@@ -20,8 +20,12 @@ import (
 const (
 	width         = 600
 	height        = 400
-	convertToRGBA = true
+	convertSource = true
 )
+
+var newImageFunc = func(r image.Rectangle) draw.Image {
+	return image.NewRGBA(r)
+}
 
 func main() {
 	im := load()
@@ -71,8 +75,8 @@ func load() image.Image {
 	if err != nil {
 		panic(err)
 	}
-	if convertToRGBA {
-		newIm := image.NewRGBA(image.Rect(0, 0, im.Bounds().Dx(), im.Bounds().Dy()))
+	if convertSource {
+		newIm := newImageFunc(image.Rect(0, 0, im.Bounds().Dx(), im.Bounds().Dy()))
 		draw.Draw(newIm, newIm.Bounds(), im, im.Bounds().Min, draw.Src)
 		im = newIm
 	}
@@ -97,7 +101,7 @@ func newResizeFuncNfnt(interp nfnt_resize.InterpolationFunction) resizeFunc {
 
 func newResizeFuncXDraw(interp x_draw.Interpolator) resizeFunc {
 	return func(im image.Image) image.Image {
-		newIm := image.NewRGBA(image.Rect(0, 0, width, height))
+		newIm := newImageFunc(image.Rect(0, 0, width, height))
 		interp.Scale(newIm, newIm.Bounds(), im, im.Bounds(), x_draw.Src, nil)
 		return newIm
 	}
@@ -112,7 +116,7 @@ func newResizeFuncImaging(filter imaging.ResampleFilter) resizeFunc {
 func newResizeFuncGift(resampling gift.Resampling) resizeFunc {
 	return func(im image.Image) image.Image {
 		g := gift.New(gift.Resize(width, height, resampling))
-		newIm := image.NewRGBA(g.Bounds(im.Bounds()))
+		newIm := newImageFunc(g.Bounds(im.Bounds()))
 		g.Draw(newIm, im)
 		return newIm
 	}
@@ -120,7 +124,7 @@ func newResizeFuncGift(resampling gift.Resampling) resizeFunc {
 
 func newResizeFuncRez(filter rez.Filter) resizeFunc {
 	return func(im image.Image) image.Image {
-		newIm := image.NewRGBA(image.Rect(0, 0, width, height))
+		newIm := newImageFunc(image.Rect(0, 0, width, height))
 		err := rez.Convert(newIm, im, filter)
 		if err != nil {
 			panic(err)
