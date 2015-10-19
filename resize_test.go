@@ -3,6 +3,7 @@ package main
 import (
 	"testing"
 
+	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
 	nfnt_resize "github.com/nfnt/resize"
 	x_draw "golang.org/x/image/draw"
@@ -120,6 +121,30 @@ func BenchmarkImagingCosine(b *testing.B) {
 
 func benchmarkImaging(b *testing.B, filter imaging.ResampleFilter) {
 	benchmark(b, newResizeFuncImaging(filter))
+}
+
+func BenchmarkGiftNearestNeighbor(b *testing.B) {
+	benchmarkGift(b, gift.NearestNeighborResampling)
+}
+
+func BenchmarkGiftBox(b *testing.B) {
+	benchmarkGift(b, gift.BoxResampling)
+}
+
+func BenchmarkGiftLinear(b *testing.B) {
+	benchmarkGift(b, gift.LinearResampling)
+}
+
+func BenchmarkGiftCubic(b *testing.B) {
+	benchmarkGift(b, gift.CubicResampling)
+}
+
+func BenchmarkGiftLanczos(b *testing.B) {
+	benchmarkGift(b, gift.LanczosResampling)
+}
+
+func benchmarkGift(b *testing.B, resampling gift.Resampling) {
+	benchmark(b, newResizeFuncGift(resampling))
 }
 
 func benchmark(b *testing.B, res resizeFunc) {

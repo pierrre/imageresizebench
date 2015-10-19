@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
 	nfnt_resize "github.com/nfnt/resize"
 	x_draw "golang.org/x/image/draw"
@@ -45,6 +46,11 @@ func main() {
 	resize(im, newResizeFuncImaging(imaging.Blackman), "imaging_blackman.png")
 	resize(im, newResizeFuncImaging(imaging.Welch), "imaging_welch.png")
 	resize(im, newResizeFuncImaging(imaging.Cosine), "imaging_cosine.png")
+	resize(im, newResizeFuncGift(gift.NearestNeighborResampling), "gift_nearest_neighbor.png")
+	resize(im, newResizeFuncGift(gift.BoxResampling), "gift_box.png")
+	resize(im, newResizeFuncGift(gift.LinearResampling), "gift_linear.png")
+	resize(im, newResizeFuncGift(gift.CubicResampling), "gift_cubic.png")
+	resize(im, newResizeFuncGift(gift.LanczosResampling), "gift_lanczos.png")
 }
 
 func load() image.Image {
@@ -87,6 +93,15 @@ func newResizeFuncXDraw(interp x_draw.Interpolator) resizeFunc {
 func newResizeFuncImaging(filter imaging.ResampleFilter) resizeFunc {
 	return func(im image.Image) image.Image {
 		return imaging.Resize(im, width, height, filter)
+	}
+}
+
+func newResizeFuncGift(resampling gift.Resampling) resizeFunc {
+	return func(im image.Image) image.Image {
+		g := gift.New(gift.Resize(width, height, resampling))
+		newIm := image.NewRGBA(g.Bounds(im.Bounds()))
+		g.Draw(newIm, im)
+		return newIm
 	}
 }
 
