@@ -8,6 +8,9 @@ import (
 	"os"
 	"time"
 
+	"image/draw"
+
+	"github.com/bamiaux/rez"
 	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
 	nfnt_resize "github.com/nfnt/resize"
@@ -15,8 +18,9 @@ import (
 )
 
 const (
-	width  = 600
-	height = 400
+	width         = 600
+	height        = 400
+	convertToRGBA = true
 )
 
 func main() {
@@ -51,6 +55,10 @@ func main() {
 	resize(im, newResizeFuncGift(gift.LinearResampling), "gift_linear.png")
 	resize(im, newResizeFuncGift(gift.CubicResampling), "gift_cubic.png")
 	resize(im, newResizeFuncGift(gift.LanczosResampling), "gift_lanczos.png")
+	resize(im, newResizeFuncRez(rez.NewBilinearFilter()), "rez_bilinear.png")
+	resize(im, newResizeFuncRez(rez.NewBicubicFilter()), "rez_bicubic.png")
+	resize(im, newResizeFuncRez(rez.NewLanczosFilter(2)), "rez_lanczos2.png")
+	resize(im, newResizeFuncRez(rez.NewLanczosFilter(3)), "rez_lanczos3.png")
 }
 
 func load() image.Image {
@@ -62,6 +70,11 @@ func load() image.Image {
 	im, _, err := image.Decode(f)
 	if err != nil {
 		panic(err)
+	}
+	if convertToRGBA {
+		newIm := image.NewRGBA(image.Rect(0, 0, im.Bounds().Dx(), im.Bounds().Dy()))
+		draw.Draw(newIm, newIm.Bounds(), im, im.Bounds().Min, draw.Src)
+		im = newIm
 	}
 	return im
 }
@@ -101,6 +114,17 @@ func newResizeFuncGift(resampling gift.Resampling) resizeFunc {
 		g := gift.New(gift.Resize(width, height, resampling))
 		newIm := image.NewRGBA(g.Bounds(im.Bounds()))
 		g.Draw(newIm, im)
+		return newIm
+	}
+}
+
+func newResizeFuncRez(filter rez.Filter) resizeFunc {
+	return func(im image.Image) image.Image {
+		newIm := image.NewRGBA(image.Rect(0, 0, width, height))
+		err := rez.Convert(newIm, im, filter)
+		if err != nil {
+			panic(err)
+		}
 		return newIm
 	}
 }

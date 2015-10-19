@@ -3,6 +3,7 @@ package main
 import (
 	"testing"
 
+	"github.com/bamiaux/rez"
 	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
 	nfnt_resize "github.com/nfnt/resize"
@@ -147,19 +148,38 @@ func benchmarkGift(b *testing.B, resampling gift.Resampling) {
 	benchmark(b, newResizeFuncGift(resampling))
 }
 
+func BenchmarkRezBilinear(b *testing.B) {
+	benchmarkRez(b, rez.NewBilinearFilter())
+}
+
+func BenchmarkRezBicubic(b *testing.B) {
+	benchmarkRez(b, rez.NewBicubicFilter())
+}
+
+func BenchmarkRezLanczos2(b *testing.B) {
+	benchmarkRez(b, rez.NewLanczosFilter(2))
+}
+
+func BenchmarkRezLanczos3(b *testing.B) {
+	benchmarkRez(b, rez.NewLanczosFilter(3))
+}
+
+func benchmarkRez(b *testing.B, filter rez.Filter) {
+	benchmark(b, newResizeFuncRez(filter))
+}
+
+var benchImage = load()
+
 func benchmark(b *testing.B, res resizeFunc) {
-	im := load()
-	b.ResetTimer()
 	if runParallel {
 		b.RunParallel(func(pb *testing.PB) {
 			for pb.Next() {
-				res(im)
+				res(benchImage)
 			}
 		})
 	} else {
-
 		for i := 0; i < b.N; i++ {
-			res(im)
+			res(benchImage)
 		}
 	}
 }
