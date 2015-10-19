@@ -3,6 +3,7 @@ package main
 import (
 	"testing"
 
+	"github.com/disintegration/imaging"
 	nfnt_resize "github.com/nfnt/resize"
 	x_draw "golang.org/x/image/draw"
 )
@@ -49,12 +50,76 @@ func BenchmarkXDrawBiLinear(b *testing.B) {
 	benchmarkXDraw(b, x_draw.BiLinear)
 }
 
-func BenchmarkXDrawCatmulRom(b *testing.B) {
+func BenchmarkXDrawCatmullRom(b *testing.B) {
 	benchmarkXDraw(b, x_draw.CatmullRom)
 }
 
 func benchmarkXDraw(b *testing.B, interp x_draw.Interpolator) {
 	benchmark(b, newResizeFuncXDraw(interp))
+}
+
+func BenchmarkImagingNearestNeighbor(b *testing.B) {
+	benchmarkImaging(b, imaging.NearestNeighbor)
+}
+
+func BenchmarkImagingBox(b *testing.B) {
+	benchmarkImaging(b, imaging.Box)
+}
+
+func BenchmarkImagingLinear(b *testing.B) {
+	benchmarkImaging(b, imaging.Linear)
+}
+
+func BenchmarkImagingHermite(b *testing.B) {
+	benchmarkImaging(b, imaging.Hermite)
+}
+
+func BenchmarkImagingMitchellNetravali(b *testing.B) {
+	benchmarkImaging(b, imaging.MitchellNetravali)
+}
+
+func BenchmarkImagingCatmullRom(b *testing.B) {
+	benchmarkImaging(b, imaging.CatmullRom)
+}
+
+func BenchmarkImagingBSpline(b *testing.B) {
+	benchmarkImaging(b, imaging.BSpline)
+}
+
+func BenchmarkImagingGaussian(b *testing.B) {
+	benchmarkImaging(b, imaging.Gaussian)
+}
+
+func BenchmarkImagingBartlett(b *testing.B) {
+	benchmarkImaging(b, imaging.Bartlett)
+}
+
+func BenchmarkImagingLanczos(b *testing.B) {
+	benchmarkImaging(b, imaging.Lanczos)
+}
+
+func BenchmarkImagingHann(b *testing.B) {
+	benchmarkImaging(b, imaging.Hann)
+}
+
+func BenchmarkImagingHamming(b *testing.B) {
+	benchmarkImaging(b, imaging.Hamming)
+}
+
+func BenchmarkImagingBlackman(b *testing.B) {
+	benchmarkImaging(b, imaging.Blackman)
+}
+
+func BenchmarkImagingWelch(b *testing.B) {
+	benchmarkImaging(b, imaging.Welch)
+}
+
+func BenchmarkImagingCosine(b *testing.B) {
+	benchmarkImaging(b, imaging.Cosine)
+}
+
+func benchmarkImaging(b *testing.B, filter imaging.ResampleFilter) {
+	benchmark(b, newResizeFuncImaging(filter))
 }
 
 func benchmark(b *testing.B, res resizeFunc) {
