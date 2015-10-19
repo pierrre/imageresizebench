@@ -72,10 +72,6 @@ func BenchmarkImagingLinear(b *testing.B) {
 	benchmarkImaging(b, imaging.Linear)
 }
 
-func BenchmarkImagingHermite(b *testing.B) {
-	benchmarkImaging(b, imaging.Hermite)
-}
-
 func BenchmarkImagingMitchellNetravali(b *testing.B) {
 	benchmarkImaging(b, imaging.MitchellNetravali)
 }
@@ -84,40 +80,12 @@ func BenchmarkImagingCatmullRom(b *testing.B) {
 	benchmarkImaging(b, imaging.CatmullRom)
 }
 
-func BenchmarkImagingBSpline(b *testing.B) {
-	benchmarkImaging(b, imaging.BSpline)
-}
-
 func BenchmarkImagingGaussian(b *testing.B) {
 	benchmarkImaging(b, imaging.Gaussian)
 }
 
-func BenchmarkImagingBartlett(b *testing.B) {
-	benchmarkImaging(b, imaging.Bartlett)
-}
-
 func BenchmarkImagingLanczos(b *testing.B) {
 	benchmarkImaging(b, imaging.Lanczos)
-}
-
-func BenchmarkImagingHann(b *testing.B) {
-	benchmarkImaging(b, imaging.Hann)
-}
-
-func BenchmarkImagingHamming(b *testing.B) {
-	benchmarkImaging(b, imaging.Hamming)
-}
-
-func BenchmarkImagingBlackman(b *testing.B) {
-	benchmarkImaging(b, imaging.Blackman)
-}
-
-func BenchmarkImagingWelch(b *testing.B) {
-	benchmarkImaging(b, imaging.Welch)
-}
-
-func BenchmarkImagingCosine(b *testing.B) {
-	benchmarkImaging(b, imaging.Cosine)
 }
 
 func benchmarkImaging(b *testing.B, filter imaging.ResampleFilter) {
