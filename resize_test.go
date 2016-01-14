@@ -10,8 +10,6 @@ import (
 	x_draw "golang.org/x/image/draw"
 )
 
-const runParallel = false
-
 func BenchmarkNfntNearestNeighbor(b *testing.B) {
 	benchmarkNfnt(b, nfnt_resize.NearestNeighbor)
 }
@@ -145,15 +143,7 @@ func benchmarkRez(b *testing.B, filter rez.Filter) {
 var benchImage = load()
 
 func benchmark(b *testing.B, res resizeFunc) {
-	if runParallel {
-		b.RunParallel(func(pb *testing.PB) {
-			for pb.Next() {
-				res(benchImage)
-			}
-		})
-	} else {
-		for i := 0; i < b.N; i++ {
-			res(benchImage)
-		}
+	for i := 0; i < b.N; i++ {
+		res(benchImage)
 	}
 }
