@@ -86,8 +86,7 @@ func load() image.Image {
 func resize(im image.Image, res resizeFunc, fileName string) {
 	start := time.Now()
 	im = res(im)
-	stop := time.Now()
-	fmt.Printf("%s: %s\n", fileName, stop.Sub(start))
+	fmt.Printf("%s: %s\n", fileName, time.Since(start))
 	save(im, fileName)
 }
 
